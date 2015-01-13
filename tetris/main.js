@@ -1,17 +1,3 @@
-
-// ==========
-// - - -
-// parent
-
-// ----------
-// parent
-
-// ==========
-// parent
-//
-// ----------
-// parent
-
 // {{{1
 var COLORS = ["cyan", "yellow", "green", "red", "blue", "orange", "magenta"];
 var MINOS = [
