@@ -230,6 +230,13 @@ function rotate2(){
     return rtn;
 }
 
+function quickDrop(){
+    var i;
+    for(i=0;canMove(0,i) && i<ROWS;i++){
+    }
+    current_y+=i-1;
+}
+
 document.body.onkeypress = document.body.onkeydown = function(e) {
     console.debug(e.keyCode);
     var x,y,r;
@@ -238,9 +245,10 @@ document.body.onkeypress = document.body.onkeydown = function(e) {
     switch(e.keyCode) {
         case 37: canMove(-1,0) && current_x--; break; // left
         case 39: canMove( 1,0) && current_x++; break; // right
-        case 40: canMove( 0,1) && current_y++; break; // right
+        case 40: canMove( 0,1) && current_y++; break; // bottom
         case 88: canMove(0,0,r=rotate2()) && (current_mino = r); break; // x
         case 90: canMove(0,0,r=rotate1()) && (current_mino = r); break; // z
+        case 32: quickDrop(); break;
     }
     render();
 }
