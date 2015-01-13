@@ -1,3 +1,18 @@
+
+// ==========
+// - - -
+// parent
+
+// ----------
+// parent
+
+// ==========
+// parent
+//
+// ----------
+// parent
+
+// {{{1
 var COLORS = ["cyan", "yellow", "green", "red", "blue", "orange", "magenta"];
 var MINOS = [
   [
@@ -15,31 +30,31 @@ var MINOS = [
   [
     [0, 0, 0, 0],
     [0, 1, 1, 0],
-    [1, 1, 0, 0], // S テトリミノ
+    [1, 1, 0, 0],// S テトリミノ
     [0, 0, 0, 0],
   ],
   [
     [0, 0, 0, 0],
     [1, 1, 0, 0],
-    [0, 1, 1, 0], // Z テトリミノ
+    [0, 1, 1, 0],// Z テトリミノ
     [0, 0, 0, 0],
   ],
   [
     [0, 0, 0, 0],
     [1, 0, 0, 0],
-    [1, 1, 1, 0], // J テトリミノ
+    [1, 1, 1, 0],// J テトリミノ
     [0, 0, 0, 0],
   ],
   [
     [0, 0, 0, 0],
     [0, 0, 1, 0],
-    [1, 1, 1, 0], // L テトリミノ
+    [1, 1, 1, 0],// L テトリミノ
     [0, 0, 0, 0],
   ],
   [
     [0, 0, 0, 0],
     [0, 1, 0, 0],
-    [1, 1, 1, 0], // T テトリミノ
+    [1, 1, 1, 0],// T テトリミノ
     [0, 0, 0, 0],
   ]
 ];
@@ -49,6 +64,8 @@ var COLS = 10;
 var ROWS = 20;
 var BLOCK_W = FIELD_W / COLS;
 var BLOCK_H = FIELD_H / ROWS;
+//}}}1
+
 var canvas = document.getElementById('main');
 var ctx = canvas.getContext('2d');
 
@@ -59,7 +76,7 @@ var i,j;
 blocks = initBlocks();
 function initBlocks(){
     var blocks = [];
-    for(i=0;i<ROWS;i++){
+    for(i=0;i<ROWS+1;i++){
         blocks.push([]);
         for(j=0;j<COLS;j++){
             blocks[i].push(false);
@@ -107,48 +124,57 @@ function render(){
     }
 }
 
-function tick() {
-    var i,j,k,f;
-  if (canMove()) {
-    current_y++;
-  } else {
-
-    // 保存
-    for(i=0;i<4;i++){
-        for(j=0;j<4;j++){
-            if(current_mino[i][j]){
-                blocks[current_y+i][current_x+j] = current_mino[i][j];
-            }
-        }
-    }
-
-    // 消去
+function line() {
+    var i,j,f,k;
     for(i=0;i<ROWS;i++){
         f = true;
         for(j=0;f&&j<COLS;j++){
-            f = blocks[i][j];
+            if(!blocks[i][j]){ f = false; }
         }
-
-        for(k=i;f&&k;k--){
-            blocks[k] = blocks[k-1];
+        if(f){
+            for(k=i;k>0;k--){
+                blocks[k] = blocks[k-1];
+            }
+            blocks[0] = blocks[ROWS];
             i--;
         }
     }
+}
 
-    // 生成
-    current_mino = newMino();
-    current_x = 3;
-    current_y = 0;
+function tick() {
+    if (canMove()) {
+        current_y++;
+    } else {
+        // 保存
+        for(i=0;i<4;i++){
+            for(j=0;j<4;j++){
+                blocks[current_y+i] = blocks[current_y+i] || [];
+                if(current_mino[i][j]){
+                    blocks[current_y+i][current_x+j] = current_mino[i][j];
+                }
+            }
+        }
 
-    if(!canMove()){
-        blocks = initBlocks();
+        // ライン除去
+        line();
+
+
+        // 生成
+        current_mino = newMino();
+        current_x = 3;
+        current_y = 0;
+
+        if(!canMove()){
+            // alert('END...');
+            blocks = initBlocks();
+        }
     }
-  }
-  render();
+    render();
 }
 
 function newMino() {
     var id = Math.floor(Math.random() * MINOS.length);
+    id = 0;
     var mino = MINOS[id];
     var i,j;
     for(i=0;i<4;i++){
@@ -162,59 +188,73 @@ function newMino() {
 }
 
 function canMove(dx,dy,r) {
-  var dx = dx || 0;
-  var dy = dy===0 ? dy : dy || 1;
-  var next_x = current_x + dx; // 次に動こうとするx座標
-  var next_y = current_y + dy; // 次に動こうとするy座標
-  var r = r||current_mino;
-  for (var y = 0; y < 4; y++) {
-    for (var x = 0; x < 4; x++) {
-      if (r[y][x]) {
-        // 下の枠を超えていたら
-        if (next_y + y >= ROWS) { 
-          return false;
-        }
-        if(next_x + x < 0) {
-            return false;
-        }
+    var dx = dx || 0;
+    var dy = dy===0 ? dy : dy || 1;
+    var mino = r || current_mino;
+    var next_x = current_x + dx; // 次に動こうとするx座標
+    var next_y = current_y + dy; // 次に動こうとするy座標
+    for (var y = 0; y < 4; y++) {
+        for (var x = 0; x < 4; x++) {
+            if (mino[y][x]) {
+                // 下の枠を超えていたら
+                if (next_y + y >= ROWS) { 
+                    return false;
+                }
+                if(next_x + x < 0) {
+                    return false;
+                }
 
-        if(next_x + x >= COLS) {
-            return false;
-        }
+                if(next_x + x >= COLS) {
+                    return false;
+                }
 
-        if(blocks[next_y + y][next_x + x]){
-            return false;
+                if(blocks[next_y + y][next_x + x]){
+                    return false;
+                }
+            }
         }
-      }
     }
-  }
-  return true;
+    return true;
 }
 
-function getRotate(t){
-    var i,j,x,y,r;
-    var t = t || false;
-    r = [];
+function rotate1(){
+    var x,y,i,j,rtn;
+    rtn = [];
     for(i=0;i<4;i++){
-        r[i] = r[i] || [];
+        x = 3-i;
         for(j=0;j<4;j++){
-            y =  t ? 3-j:j;
-            x = !t ? 3-i:i;
-            r[i][j] = current_mino[y][x];
+            y = j;
+            rtn[y] = rtn[y] || [0,0,0,0];
+            rtn[y][x] = current_mino[i][j];
         }
     }
-    return r;
+    return rtn;
+}
+function rotate2(){
+    var x,y,i,j,rtn;
+    rtn = [];
+    for(i=0;i<4;i++){
+        x = i;
+        for(j=0;j<4;j++){
+            y = 3-j;
+            rtn[y] = rtn[y] || [0,0,0,0];
+            rtn[y][x] = current_mino[i][j];
+        }
+    }
+    return rtn;
 }
 
-document.body.onkeydown = function(e) { 
-    var r;
+document.body.onkeypress = document.body.onkeydown = function(e) {
     console.debug(e.keyCode);
+    var x,y,r;
+    x = 0;
+    y = 0;
     switch(e.keyCode) {
-        case 37: if(canMove(-1, 0)) current_x+=-1; break;
-        case 39: if(canMove( 1, 0)) current_x+=1; break;
-        case 40: if(canMove( 0, 1)) current_y+=1; break;
-        case 90: if(canMove(0,0,r=getRotate(true))) current_mino=r; break;
-        case 88: if(canMove(0,0,r=getRotate(false))) current_mino=r; break;
+        case 37: canMove(-1,0) && current_x--; break; // left
+        case 39: canMove( 1,0) && current_x++; break; // right
+        case 40: canMove( 0,1) && current_y++; break; // right
+        case 88: canMove(0,0,r=rotate2()) && (current_mino = r); break; // x
+        case 90: canMove(0,0,r=rotate1()) && (current_mino = r); break; // z
     }
     render();
 }
