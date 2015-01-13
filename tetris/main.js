@@ -1,4 +1,11 @@
 // {{{1
+// TODO:
+// [ ] ランダム
+// [ ] 操作性の向上
+// [ ] T-Spin
+// [ ] スコア
+// [ ] タイトルなど
+
 var COLORS = ["cyan", "yellow", "green", "red", "blue", "orange", "magenta"];
 var MINOS = [
   [
