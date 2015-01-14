@@ -6,6 +6,7 @@
 // [ ] スコア
 // [ ] タイトルなど
 
+var score = 0;
 var counting = {};
 var COLORS = ["cyan", "yellow", "green", "red", "blue", "orange", "magenta"];
 var MINOS = [
@@ -126,6 +127,8 @@ function line() {
             if(!blocks[i][j]){ f = false; }
         }
         if(f){
+            score += 1;
+            $('.score').text(score);
             for(k=i;k>0;k--){
                 blocks[k] = blocks[k-1];
             }
@@ -269,8 +272,8 @@ document.body.onkeydown = function(e) {
         case 37: canMove(-1,0) && current_x--; break; // left
         case 39: canMove( 1,0) && current_x++; break; // right
         case 40: canMove( 0,1) && current_y++; break; // bottom
-        case 88: canMove(0,0,r=rotate2()) && (current_mino = r); break; // x
-        case 90: canMove(0,0,r=rotate1()) && (current_mino = r); break; // z
+        case 88: canMove(0,0,r=rotate1()) && (current_mino = r); break; // x
+        case 90: canMove(0,0,r=rotate2()) && (current_mino = r); break; // z
         case 32: quickDrop(); break;
     }
     render();
