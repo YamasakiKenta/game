@@ -6,6 +6,7 @@
 // [ ] スコア
 // [ ] タイトルなど
 
+var counting = {};
 var COLORS = ["cyan", "yellow", "green", "red", "blue", "orange", "magenta"];
 var MINOS = [
   [
@@ -83,7 +84,7 @@ current_x = 0;
 
 current_mino = newMino();
 render();
-setInterval(tick, 100);
+setInterval(tick, 500);
 
 function render(){
     ctx.clearRect(0,0,FIELD_W, FIELD_H);
@@ -166,8 +167,22 @@ function tick() {
 }
 
 function newMino() {
-    var id = Math.floor(Math.random() * MINOS.length);
-    id = 0;
+    var id;
+    if(Object.keys(counting).length==MINOS.length){
+        counting = {};
+    }
+    while(1){
+       id = Math.floor(Math.random() * MINOS.length);
+       if(!counting[id]){
+           break;
+       }
+    }
+    counting[id] = true;
+    console.debug(counting);
+
+    var t = $('.count li').eq(id).find('span').text();
+    $('.count li').eq(id).find('span').text(Number(t)+1);
+
     var mino = MINOS[id];
     var i,j;
     for(i=0;i<4;i++){
@@ -242,10 +257,11 @@ function quickDrop(){
     for(i=0;canMove(0,i) && i<ROWS;i++){
     }
     current_y+=i-1;
+    tick();
 }
 
-document.body.onkeypress = document.body.onkeydown = function(e) {
-    console.debug(e.keyCode);
+document.body.onkeydown = function(e) {
+    // console.debug(e.keyCode);
     var x,y,r;
     x = 0;
     y = 0;
