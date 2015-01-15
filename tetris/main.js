@@ -6,6 +6,7 @@
 // [ ] スコア
 // [ ] タイトルなど
 
+var hold = -1;
 var gost_y = 0;
 var score = 0;
 var counting = {};
@@ -65,7 +66,7 @@ var BLOCK_H = FIELD_H / ROWS;
 var canvas = document.getElementById('main');
 var ctx = canvas.getContext('2d');
 
-var current_y, current_x, current_mino, blocks;
+var current_y, current_x, current_mino, blocks, current_mino_id;
 var i,j;
 
 // 初期化
@@ -93,7 +94,7 @@ function render(){
 
     setGost();
 
-    ctx.clearRect(0,0,FIELD_W, FIELD_H);
+    ctx.clearRect(0,0,FIELD_W+300, FIELD_H);
     ctx.StrokeStyle = 'black';
 
     var x,y,i;
@@ -122,6 +123,21 @@ function render(){
                 ctx.fillRect(x,gy,BLOCK_W-1, BLOCK_H-1);
 
                 ctx.fillStyle = COLORS[current_mino[i][j]-1];
+                ctx.fillRect(x,y,BLOCK_W-1, BLOCK_H-1);
+
+            }
+        }
+    }
+
+    var tmp = MINOS[hold] || [];
+    for(i=0;i<4;i++){
+        for(j=0;tmp[i]&&j<4;j++){
+            if(tmp[i][j]){
+                y = BLOCK_H * i;
+                x = BLOCK_W * j + 300;
+                ctx.strokeRect(x,y,BLOCK_W-1, BLOCK_H-1);
+
+                ctx.fillStyle = COLORS[tmp[i][j]-1];
                 ctx.fillRect(x,y,BLOCK_W-1, BLOCK_H-1);
 
             }
@@ -179,19 +195,21 @@ function tick() {
     render();
 }
 
-function newMino() {
-    var id;
-    if(Object.keys(counting).length==MINOS.length){
-        counting = {};
+function newMino(id) {
+    var id = id || null;
+    if(!id){
+        if(Object.keys(counting).length==MINOS.length){
+            counting = {};
+        }
+        while(1){
+            id = Math.floor(Math.random() * MINOS.length);
+            if(!counting[id]){
+                break;
+            }
+        }
+        counting[id] = true;
     }
-    while(1){
-       id = Math.floor(Math.random() * MINOS.length);
-       if(!counting[id]){
-           break;
-       }
-    }
-    counting[id] = true;
-    console.debug(counting);
+    current_mino_id = id;
 
     var t = $('.count li').eq(id).find('span').text();
     $('.count li').eq(id).find('span').text(Number(t)+1);
@@ -274,12 +292,26 @@ function quickDrop(){
     tick();
 }
 
+function setHold(){
+    // 最初のみ
+    if(hold<0){
+        hold = current_mino_id;
+        current_mino = newMino();
+    }
+    else {
+        tmp = current_mino_id;
+        current_mino = newMino(hold);
+        hold = tmp;
+    }
+}
+
 document.body.onkeydown = function(e) {
-    // console.debug(e.keyCode);
+    console.debug(e.keyCode);
     var x,y,r;
     x = 0;
     y = 0;
     switch(e.keyCode) {
+        case 16: setHold(); break; // space
         case 37: canMove(-1,0) && current_x--; break; // left
         case 39: canMove( 1,0) && current_x++; break; // right
         case 40: canMove( 0,1) && current_y++; break; // bottom
