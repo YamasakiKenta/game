@@ -6,6 +6,7 @@
 // [ ] スコア
 // [ ] タイトルなど
 
+var gost_y = 0;
 var score = 0;
 var counting = {};
 var COLORS = ["cyan", "yellow", "green", "red", "blue", "orange", "magenta"];
@@ -84,10 +85,14 @@ current_y = 0;
 current_x = 0;
 
 current_mino = newMino();
+
 render();
 setInterval(tick, 500);
 
 function render(){
+
+    setGost();
+
     ctx.clearRect(0,0,FIELD_W, FIELD_H);
     ctx.StrokeStyle = 'black';
 
@@ -112,8 +117,13 @@ function render(){
                 x = BLOCK_W * (current_x + j);
                 ctx.strokeRect(x,y,BLOCK_W-1, BLOCK_H-1);
 
+                gy = BLOCK_H * (gost_y + i);
+                ctx.fillStyle = 'black';
+                ctx.fillRect(x,gy,BLOCK_W-1, BLOCK_H-1);
+
                 ctx.fillStyle = COLORS[current_mino[i][j]-1];
                 ctx.fillRect(x,y,BLOCK_W-1, BLOCK_H-1);
+
             }
         }
     }
@@ -195,6 +205,7 @@ function newMino() {
             }
         }
     }
+
     return mino;
 }
 
@@ -277,4 +288,11 @@ document.body.onkeydown = function(e) {
         case 32: quickDrop(); break;
     }
     render();
+}
+
+function setGost(){
+    var i;
+    for(i=0;canMove(0,i) && i<ROWS;i++){
+    }
+    gost_y = current_y+i-1;
 }
