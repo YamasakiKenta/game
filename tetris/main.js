@@ -75,10 +75,7 @@ function initBlocks(){
     return blocks;
 }
 
-current_y = 0;
-current_x = 0;
-
-current_mino = newMino();
+newMino();
 
 render();
 setInterval(tick, 500);
@@ -181,9 +178,7 @@ function tick() {
 
 
         // 生成
-        current_mino = newMino();
-        current_x = 3;
-        current_y = 0;
+        newMino();
 
         if(!canMove()){
             // alert('END...');
@@ -207,7 +202,6 @@ function newMino(id) {
         }
         counting[id] = true;
     }
-    current_mino_id = id;
 
     var t = $('.count li').eq(id).find('span').text();
     $('.count li').eq(id).find('span').text(Number(t)+1);
@@ -222,7 +216,11 @@ function newMino(id) {
         }
     }
 
-    return mino;
+    current_mino_id = id;
+    current_rotate = 0;
+    current_x = 3;
+    current_y = 0;
+    current_mino = mino;
 }
 
 function canMove(dx,dy,r) {
@@ -261,6 +259,8 @@ function rotate1(){
     if(current_mino_id==1){ return current_mino; }
     d = (current_mino_id==0)?3:2;
 
+
+    // 回転
     for(i=0;i<d+1;i++){
         x = d-i;
         for(j=0;j<d+1;j++){
@@ -268,6 +268,18 @@ function rotate1(){
             rtn[y][x] = current_mino[i][j];
         }
     }
+
+    var l,tbl;
+    tbl = (current_mino_id==0)?gRotationRuleI:gRotationRuleGeneral;
+    l=d[0][r].length
+
+    // 判定
+    for(i=0;i<l;i++){
+        x = 
+gRotationRuleGeneral
+    }
+    
+
     return rtn;
 }
 function rotate2(){
@@ -276,6 +288,7 @@ function rotate2(){
     if(current_mino_id==1){ return current_mino; }
     d = (current_mino_id==0)?3:2;
 
+    // 回転
     for(i=0;i<d+1;i++){
         x = i;
         for(j=0;j<d+1;j++){
@@ -283,6 +296,8 @@ function rotate2(){
             rtn[y][x] = current_mino[i][j];
         }
     }
+
+    // 判定
     return rtn;
 }
 
@@ -298,11 +313,11 @@ function setHold(){
     // 最初のみ
     if(hold<0){
         hold = current_mino_id;
-        current_mino = newMino();
+        newMino();
     }
     else {
         tmp = current_mino_id;
-        current_mino = newMino(hold);
+        newMino(hold);
         hold = tmp;
     }
 }
