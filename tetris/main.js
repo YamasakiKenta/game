@@ -253,18 +253,18 @@ function canMove(dx,dy,r) {
     return true;
 }
 
-function rotate1(){
+function rotate(isR){
     var x,y,i,j,rtn,d;
     rtn = [[0,0,0,0],[0,0,0,0],[0,0,0,0],[0,0,0,0]];
     if(current_mino_id==1){ return current_mino; }
     d = (current_mino_id==0)?3:2;
-    nr = (current_rotate+5)%4;
+    nr = (current_rotate+(isR?5:3))%4;
 
     // 回転
     for(i=0;i<d+1;i++){
-        x = d-i;
+        x = (isR?d-i:i);
         for(j=0;j<d+1;j++){
-            y = j;
+            y = (isR?j:d-j);
             rtn[y][x] = current_mino[i][j];
         }
     }
@@ -272,45 +272,8 @@ function rotate1(){
     var l,tbl;
     tbl = (current_mino_id==0)?gRotationRuleI:gRotationRuleGeneral;
 
-    tbl_dx = tbl.dx[0][nr];
-    tbl_dy = tbl.dy[0][nr];
-    l=tbl_dx.length;
-
-    // 判定
-    var dx,dy;
-    for(i=0;i<l;i++){
-        dx = tbl_dx[i];
-        dy = tbl_dy[i];
-        if(canMove(dx,dy,rtn)){
-            current_x += dx;
-            current_y += dy;
-            current_mino = rtn;
-            current_rotate = nr;
-            break;
-        };
-    }
-}
-function rotate2(){
-    var x,y,i,j,rtn,d;
-    rtn = [[0,0,0,0],[0,0,0,0],[0,0,0,0],[0,0,0,0]];
-    if(current_mino_id==1){ return current_mino; }
-    d = (current_mino_id==0)?3:2;
-    nr = (current_rotate+3)%4;
-
-    // 回転
-    for(i=0;i<d+1;i++){
-        x = i;
-        for(j=0;j<d+1;j++){
-            y = d-j;
-            rtn[y][x] = current_mino[i][j];
-        }
-    }
-
-    var l,tbl;
-    tbl = (current_mino_id==0)?gRotationRuleI:gRotationRuleGeneral;
-
-    tbl_dx = tbl.dx[1][nr];
-    tbl_dy = tbl.dy[1][nr];
+    tbl_dx = tbl.dx[(isR?0:1)][nr];
+    tbl_dy = tbl.dy[(isR?0:1)][nr];
     l=tbl_dx.length;
 
     // 判定
@@ -359,8 +322,8 @@ document.body.onkeydown = function(e) {
         case 37: canMove(-1,0) && current_x--; break; // left
         case 39: canMove( 1,0) && current_x++; break; // right
         case 40: canMove( 0,1) && current_y++; break; // bottom
-        case 88: rotate1(); break; // x
-        case 90: rotate2(); break; // z
+        case 88: rotate(true);  break; // x
+        case 90: rotate(false); break; // z
         case 32: quickDrop(); break;
     }
     render();
