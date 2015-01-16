@@ -59,7 +59,7 @@ var BLOCK_H = FIELD_H / ROWS;
 var canvas = document.getElementById('main');
 var ctx = canvas.getContext('2d');
 
-var current_y, current_x, current_mino, blocks, current_mino_id;
+var current_y, current_x, current_mino, blocks, current_mino_id, current_rotate;
 var i,j;
 
 // 初期化
@@ -256,26 +256,30 @@ function canMove(dx,dy,r) {
 }
 
 function rotate1(){
-    var x,y,i,j,rtn;
-    rtn = [];
-    for(i=0;i<4;i++){
-        x = 3-i;
-        for(j=0;j<4;j++){
+    var x,y,i,j,rtn,d;
+    rtn = [[0,0,0,0],[0,0,0,0],[0,0,0,0],[0,0,0,0]];
+    if(current_mino_id==1){ return current_mino; }
+    d = (current_mino_id==0)?3:2;
+
+    for(i=0;i<d+1;i++){
+        x = d-i;
+        for(j=0;j<d+1;j++){
             y = j;
-            rtn[y] = rtn[y] || [0,0,0,0];
             rtn[y][x] = current_mino[i][j];
         }
     }
     return rtn;
 }
 function rotate2(){
-    var x,y,i,j,rtn;
-    rtn = [];
-    for(i=0;i<4;i++){
+    var x,y,i,j,rtn,d;
+    rtn = [[0,0,0,0],[0,0,0,0],[0,0,0,0],[0,0,0,0]];
+    if(current_mino_id==1){ return current_mino; }
+    d = (current_mino_id==0)?3:2;
+
+    for(i=0;i<d+1;i++){
         x = i;
-        for(j=0;j<4;j++){
-            y = 3-j;
-            rtn[y] = rtn[y] || [0,0,0,0];
+        for(j=0;j<d+1;j++){
+            y = d-j;
             rtn[y][x] = current_mino[i][j];
         }
     }
