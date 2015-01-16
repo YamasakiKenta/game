@@ -258,7 +258,7 @@ function rotate1(){
     rtn = [[0,0,0,0],[0,0,0,0],[0,0,0,0],[0,0,0,0]];
     if(current_mino_id==1){ return current_mino; }
     d = (current_mino_id==0)?3:2;
-
+    nr = (current_rotate+5)%4;
 
     // 回転
     for(i=0;i<d+1;i++){
@@ -271,22 +271,31 @@ function rotate1(){
 
     var l,tbl;
     tbl = (current_mino_id==0)?gRotationRuleI:gRotationRuleGeneral;
-    l=d[0][r].length
+
+    tbl_dx = tbl.dx[0][nr];
+    tbl_dy = tbl.dy[0][nr];
+    l=tbl_dx.length;
 
     // 判定
+    var dx,dy;
     for(i=0;i<l;i++){
-        x = 
-gRotationRuleGeneral
+        dx = tbl_dx[i];
+        dy = tbl_dy[i];
+        if(canMove(dx,dy,rtn)){
+            current_x += dx;
+            current_y += dy;
+            current_mino = rtn;
+            current_rotate = nr;
+            break;
+        };
     }
-    
-
-    return rtn;
 }
 function rotate2(){
     var x,y,i,j,rtn,d;
     rtn = [[0,0,0,0],[0,0,0,0],[0,0,0,0],[0,0,0,0]];
     if(current_mino_id==1){ return current_mino; }
     d = (current_mino_id==0)?3:2;
+    nr = (current_rotate+3)%4;
 
     // 回転
     for(i=0;i<d+1;i++){
@@ -297,8 +306,26 @@ function rotate2(){
         }
     }
 
+    var l,tbl;
+    tbl = (current_mino_id==0)?gRotationRuleI:gRotationRuleGeneral;
+
+    tbl_dx = tbl.dx[1][nr];
+    tbl_dy = tbl.dy[1][nr];
+    l=tbl_dx.length;
+
     // 判定
-    return rtn;
+    var dx,dy;
+    for(i=0;i<l;i++){
+        dx = tbl_dx[i];
+        dy = tbl_dy[i];
+        if(canMove(dx,dy,rtn)){
+            current_x += dx;
+            current_y += dy;
+            current_mino = rtn;
+            current_rotate = nr;
+            break;
+        };
+    }
 }
 
 function quickDrop(){
@@ -323,7 +350,7 @@ function setHold(){
 }
 
 document.body.onkeydown = function(e) {
-    console.debug(e.keyCode);
+    // console.debug(e.keyCode);
     var x,y,r;
     x = 0;
     y = 0;
@@ -332,8 +359,8 @@ document.body.onkeydown = function(e) {
         case 37: canMove(-1,0) && current_x--; break; // left
         case 39: canMove( 1,0) && current_x++; break; // right
         case 40: canMove( 0,1) && current_y++; break; // bottom
-        case 88: canMove(0,0,r=rotate1()) && (current_mino = r); break; // x
-        case 90: canMove(0,0,r=rotate2()) && (current_mino = r); break; // z
+        case 88: rotate1(); break; // x
+        case 90: rotate2(); break; // z
         case 32: quickDrop(); break;
     }
     render();
