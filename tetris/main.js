@@ -12,39 +12,39 @@ var MINOS = [
     [0, 0, 0, 0],
   ],
   [
-    [0, 0, 0, 0],
     [0, 1, 1, 0],
     [0, 1, 1, 0],// O テトリミノ
     [0, 0, 0, 0],
+    [0, 0, 0, 0],
   ],
   [
-    [0, 0, 0, 0],
     [0, 1, 1, 0],
     [1, 1, 0, 0],// S テトリミノ
     [0, 0, 0, 0],
+    [0, 0, 0, 0],
   ],
   [
-    [0, 0, 0, 0],
     [1, 1, 0, 0],
     [0, 1, 1, 0],// Z テトリミノ
     [0, 0, 0, 0],
+    [0, 0, 0, 0],
   ],
   [
-    [0, 0, 0, 0],
     [1, 0, 0, 0],
     [1, 1, 1, 0],// J テトリミノ
     [0, 0, 0, 0],
+    [0, 0, 0, 0],
   ],
   [
-    [0, 0, 0, 0],
     [0, 0, 1, 0],
     [1, 1, 1, 0],// L テトリミノ
     [0, 0, 0, 0],
+    [0, 0, 0, 0],
   ],
   [
-    [0, 0, 0, 0],
     [0, 1, 0, 0],
     [1, 1, 1, 0],// T テトリミノ
+    [0, 0, 0, 0],
     [0, 0, 0, 0],
   ]
 ];
@@ -88,15 +88,18 @@ function render(){
     setGost();
 
     ctx.clearRect(0,0,FIELD_W+300, FIELD_H);
-    ctx.StrokeStyle = 'black';
 
     var x,y,i;
     for(i=0;i<ROWS;i++){
         for(j=0;j<COLS;j++){
+            y = BLOCK_H * i;
+            x = BLOCK_W * j;
+            ctx.fillStyle = '#999';
+            ctx.fillRect(x,y,BLOCK_W-1, BLOCK_H-1);
+
             if(blocks[i][j]){
-                y = BLOCK_H * i;
-                x = BLOCK_W * j;
-                ctx.strokeRect(x,y,BLOCK_W-1, BLOCK_H-1);
+                // ctx.StrokeStyle = 'black';
+                // ctx.strokeRect(x,y,BLOCK_W-1, BLOCK_H-1);
 
                 ctx.fillStyle = COLORS[blocks[i][j]-1];
                 ctx.fillRect(x,y,BLOCK_W-1, BLOCK_H-1);
@@ -109,7 +112,9 @@ function render(){
             if(current_mino[i][j]){
                 y = BLOCK_H * (current_y + i);
                 x = BLOCK_W * (current_x + j);
-                ctx.strokeRect(x,y,BLOCK_W-1, BLOCK_H-1);
+
+                // ctx.StrokeStyle = 'black';
+                // ctx.strokeRect(x,y,BLOCK_W-1, BLOCK_H-1);
 
                 gy = BLOCK_H * (gost_y + i);
                 ctx.fillStyle = 'black';
@@ -127,8 +132,8 @@ function render(){
         for(j=0;tmp[i]&&j<4;j++){
             if(tmp[i][j]){
                 y = BLOCK_H * i;
-                x = BLOCK_W * j + 300;
-                ctx.strokeRect(x,y,BLOCK_W-1, BLOCK_H-1);
+                x = BLOCK_W * j + 300 + BLOCK_W;
+                // ctx.strokeRect(x,y,BLOCK_W-1, BLOCK_H-1);
 
                 ctx.fillStyle = COLORS[tmp[i][j]-1];
                 ctx.fillRect(x,y,BLOCK_W-1, BLOCK_H-1);
