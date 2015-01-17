@@ -159,30 +159,39 @@ function line() {
     }
 }
 
+function nextTick(){
+    nextTickEventID = -1;
+
+    // 保存
+    for(i=0;i<4;i++){
+        for(j=0;j<4;j++){
+            blocks[current_y+i] = blocks[current_y+i] || [];
+            if(current_mino[i][j]){
+                blocks[current_y+i][current_x+j] = current_mino[i][j];
+            }
+        }
+    }
+
+    // ライン除去
+    line();
+
+
+    // 生成
+    newMino();
+
+    if(!canMove()){
+        // alert('END...');
+        blocks = initBlocks();
+    }
+}
+
+var nextTickEventID = -1;
 function tick() {
     if (canMove()) {
         current_y++;
     } else {
-        // 保存
-        for(i=0;i<4;i++){
-            for(j=0;j<4;j++){
-                blocks[current_y+i] = blocks[current_y+i] || [];
-                if(current_mino[i][j]){
-                    blocks[current_y+i][current_x+j] = current_mino[i][j];
-                }
-            }
-        }
-
-        // ライン除去
-        line();
-
-
-        // 生成
-        newMino();
-
-        if(!canMove()){
-            // alert('END...');
-            blocks = initBlocks();
+        if(nextTickEventID<0){
+            nextTickEventID = setTimeout(nextTick, 1000);
         }
     }
     render();
@@ -296,7 +305,7 @@ function quickDrop(){
     for(i=0;canMove(0,i) && i<ROWS;i++){
     }
     current_y+=i-1;
-    tick();
+    nextTick();
 }
 
 function setHold(){
@@ -326,6 +335,7 @@ document.body.onkeydown = function(e) {
         case 90: rotate(false); break; // z
         case 32: quickDrop(); break;
     }
+
     render();
 }
 
