@@ -1,84 +1,27 @@
-// Data {{{1
 var hold = -1;
 var gost_y = 0;
 var score = 0;
 var counting = {};
-var COLORS = ["cyan", "yellow", "green", "red", "blue", "orange", "magenta"];
-var MINOS = [
-  [
-    [0, 0, 0, 0],
-    [1, 1, 1, 1],
-    [0, 0, 0, 0], // I テトリミノ
-    [0, 0, 0, 0],
-  ],
-  [
-    [0, 1, 1, 0],
-    [0, 1, 1, 0],// O テトリミノ
-    [0, 0, 0, 0],
-    [0, 0, 0, 0],
-  ],
-  [
-    [0, 1, 1, 0],
-    [1, 1, 0, 0],// S テトリミノ
-    [0, 0, 0, 0],
-    [0, 0, 0, 0],
-  ],
-  [
-    [1, 1, 0, 0],
-    [0, 1, 1, 0],// Z テトリミノ
-    [0, 0, 0, 0],
-    [0, 0, 0, 0],
-  ],
-  [
-    [1, 0, 0, 0],
-    [1, 1, 1, 0],// J テトリミノ
-    [0, 0, 0, 0],
-    [0, 0, 0, 0],
-  ],
-  [
-    [0, 0, 1, 0],
-    [1, 1, 1, 0],// L テトリミノ
-    [0, 0, 0, 0],
-    [0, 0, 0, 0],
-  ],
-  [
-    [0, 1, 0, 0],
-    [1, 1, 1, 0],// T テトリミノ
-    [0, 0, 0, 0],
-    [0, 0, 0, 0],
-  ]
-];
-var FIELD_W = 300;
-var FIELD_H = 600;
-var COLS = 10;
-var ROWS = 20;
-var BLOCK_W = FIELD_W / COLS;
-var BLOCK_H = FIELD_H / ROWS;
-//}}}1
-
 var canvas = document.getElementById('main');
 var ctx = canvas.getContext('2d');
-
 var current_y, current_x, current_mino, blocks, current_mino_id, current_rotate;
-var i,j;
 
 // 初期化
 blocks = initBlocks();
 function initBlocks(){
+    var i,j;
     var blocks = [];
     for(i=0;i<ROWS+1;i++){
         blocks.push([]);
         for(j=0;j<COLS;j++){
-            blocks[i].push(false);
+            blocks[i].push(0);
         }
     }
     return blocks;
 }
 
 newMino();
-
 render();
-setInterval(tick, 500);
 
 function render(){
 
@@ -160,8 +103,9 @@ function line() {
 }
 
 function nextTick(){
+    clearTimeout(nextTickEventID)
     nextTickEventID = -1;
-
+    
     // 保存
     for(i=0;i<4;i++){
         for(j=0;j<4;j++){
@@ -181,9 +125,11 @@ function nextTick(){
 
     if(!canMove()){
         // alert('END...');
+        canMove();
         blocks = initBlocks();
     }
 }
+
 
 var nextTickEventID = -1;
 function tick() {
@@ -197,7 +143,11 @@ function tick() {
     render();
 }
 
+var intervalID;
 function newMino(id) {
+
+    clearInterval(intervalID)
+
     var id = id || null;
     if(!id){
         if(Object.keys(counting).length==MINOS.length){
@@ -230,6 +180,8 @@ function newMino(id) {
     current_x = 3;
     current_y = 0;
     current_mino = mino;
+
+    intervalID = setInterval(tick, 500);
 }
 
 function canMove(dx,dy,r) {
@@ -305,6 +257,7 @@ function quickDrop(){
     for(i=0;canMove(0,i) && i<ROWS;i++){
     }
     current_y+=i-1;
+    console.debug('# quick');
     nextTick();
 }
 
