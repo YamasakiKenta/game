@@ -1,44 +1,60 @@
 var ctx = document.getElementById('main').getContext('2d');
 
-var title = function(){
-    function render(){
+var Util = {
+    setTimeout: function(self, func, time){
+        return setTimeout(function(){
+            func.call(self);
+        }, time);
+    }, setInterval: function(self, func, time){
+        return setInterval(function(){
+            func.call(self);
+        }, time);
+    }
+}
+
+var title = {
+    render: function(){
         ctx.clearRect(0,0,FIELD_W+300, FIELD_H);
         ctx.font = "18px 'ＭＳ Ｐゴシック'";
         ctx.fillStyle = 'black';
         ctx.fillText("Tetris", 10, 25);
-    }
-    render();
-    document.body.onkeydown = function(e) {
+    },
+    input: function(){
         // game.state('main'); 
     }
-}
-var main = function(){
-    var hold = -1;
-    var gost_y = 0;
-    var score = 0;
-    var counting = {};
-    var current_y, current_x, current_mino, blocks, current_mino_id, current_rotate;
+};
+var main = {
+    constructor: function(){
+        this.hold = -1;
+        this.gost_y = 0;
+        this.score = 0;
+        this.counting = {};
+        this.current_y = 0;
+        this.current_x = 0;
+        this.current_mino = 0;
+        this.blocks = 0;
+        this.current_mino_id = 0;
+        this.current_rotate = 0;
 
-    // 初期化
-    blocks = initBlocks();
-    function initBlocks(){
-        var i,j;
-        var blocks = [];
-        for(i=0;i<ROWS+1;i++){
-            blocks.push([]);
-            for(j=0;j<COLS;j++){
-                blocks[i].push(0);
+        // 初期化
+        this.blocks = initBlocks();
+        function initBlocks(){
+            var i,j;
+            var blocks = [];
+            for(i=0;i<ROWS+1;i++){
+                blocks.push([]);
+                for(j=0;j<COLS;j++){
+                    blocks[i].push(0);
+                }
             }
+            return blocks;
         }
-        return blocks;
-    }
+        this.newMino();
+    },
 
-    newMino();
-    render();
+    render: function(){
 
-    function render(){
-
-        setGost();
+        this.setGost();
 
         ctx.clearRect(0,0,FIELD_W+300, FIELD_H);
 
@@ -50,11 +66,11 @@ var main = function(){
                 ctx.fillStyle = '#999';
                 ctx.fillRect(x,y,BLOCK_W-1, BLOCK_H-1);
 
-                if(blocks[i][j]){
+                if(this.blocks[i][j]){
                     // ctx.StrokeStyle = 'black';
                     // ctx.strokeRect(x,y,BLOCK_W-1, BLOCK_H-1);
 
-                    ctx.fillStyle = COLORS[blocks[i][j]-1];
+                    ctx.fillStyle = COLORS[this.blocks[i][j]-1];
                     ctx.fillRect(x,y,BLOCK_W-1, BLOCK_H-1);
                 }
             }
@@ -62,25 +78,25 @@ var main = function(){
 
         for(i=0;i<4;i++){
             for(j=0;j<4;j++){
-                if(current_mino[i][j]){
-                    y = BLOCK_H * (current_y + i);
-                    x = BLOCK_W * (current_x + j);
+                if(this.current_mino[i][j]){
+                    y = BLOCK_H * (this.current_y + i);
+                    x = BLOCK_W * (this.current_x + j);
 
                     // ctx.StrokeStyle = 'black';
                     // ctx.strokeRect(x,y,BLOCK_W-1, BLOCK_H-1);
 
-                    gy = BLOCK_H * (gost_y + i);
+                    gy = BLOCK_H * (this.gost_y + i);
                     ctx.fillStyle = 'black';
                     ctx.fillRect(x,gy,BLOCK_W-1, BLOCK_H-1);
 
-                    ctx.fillStyle = COLORS[current_mino[i][j]-1];
+                    ctx.fillStyle = COLORS[this.current_mino[i][j]-1];
                     ctx.fillRect(x,y,BLOCK_W-1, BLOCK_H-1);
 
                 }
             }
         }
 
-        var tmp = MINOS[hold] || [];
+        var tmp = MINOS[this.hold] || [];
         for(i=0;i<4;i++){
             for(j=0;tmp[i]&&j<4;j++){
                 if(tmp[i][j]){
@@ -94,85 +110,78 @@ var main = function(){
                 }
             }
         }
-    }
+    },
 
-    function line() {
+    _line: function(){
         var i,j,f,k;
         for(i=0;i<ROWS;i++){
             f = true;
             for(j=0;f&&j<COLS;j++){
-                if(!blocks[i][j]){ f = false; }
+                if(!this.blocks[i][j]){ f = false; }
             }
             if(f){
-                score += 1;
-                $('.score').text(score);
+                this.score += 1;
+                $('.score').text(this.score);
                 for(k=i;k>0;k--){
-                    blocks[k] = blocks[k-1];
+                    this.blocks[k] = this.blocks[k-1];
                 }
-                blocks[0] = blocks[ROWS];
+                this.blocks[0] = this.blocks[ROWS];
                 i--;
             }
         }
-    }
+    },
 
-    function nextTick(){
-        clearTimeout(nextTickEventID)
-        nextTickEventID = -1;
+    _nextTick: function(){
+        clearTimeout(this.nextTickEventID)
+        this.nextTickEventID = -1;
 
         // 保存
         for(i=0;i<4;i++){
             for(j=0;j<4;j++){
-                blocks[current_y+i] = blocks[current_y+i] || [];
-                if(current_mino[i][j]){
-                    blocks[current_y+i][current_x+j] = current_mino[i][j];
+                this.blocks[this.current_y+i] = this.blocks[this.current_y+i] || [];
+                if(this.current_mino[i][j]){
+                    this.blocks[this.current_y+i][this.current_x+j] = this.current_mino[i][j];
                 }
             }
         }
 
         // ライン除去
-        line();
+        this._line();
 
 
         // 生成
-        newMino();
+        this.newMino();
 
-        if(!canMove()){
+        if(!this.canMove()){
             game.state('title');
-            canMove();
-            blocks = initBlocks();
+            this.canMove();
+            this.blocks = initBlocks();
         }
-    }
+    },
 
-
-    var nextTickEventID = -1;
-    function tick() {
-        if (canMove()) {
-            current_y++;
+    tick: function() {
+        if (this.canMove()) {
+            this.current_y++;
         } else {
-            if(nextTickEventID<0){
-                nextTickEventID = setTimeout(nextTick, 1000);
+            if(this.nextTickEventID<0){
+                this.nextTickEventID = Util.setTimeout(this, this._nextTick, 1000);
             }
         }
-        render();
-    }
+    },
 
-    var intervalID;
-    function newMino(id) {
-
-        clearInterval(intervalID)
-
+    newMino: function(id) {
         var id = id || null;
         if(!id){
-            if(Object.keys(counting).length==MINOS.length){
-                counting = {};
+            if(Object.keys(this.counting).length==MINOS.length){
+                this.counting = {};
             }
             while(1){
                 id = Math.floor(Math.random() * MINOS.length);
-                if(!counting[id]){
+                if(!this.counting[id]){
                     break;
                 }
             }
-            counting[id] = true;
+            this.counting[id] = true;
         }
 
         var t = $('.count li').eq(id).find('span').text();
@@ -188,21 +197,19 @@ var main = function(){
             }
         }
 
-        current_mino_id = id;
-        current_rotate = 0;
-        current_x = 3;
-        current_y = 0;
-        current_mino = mino;
+        this.current_mino_id = id;
+        this.current_rotate = 0;
+        this.current_x = 3;
+        this.current_y = 0;
+        this.current_mino = mino;
+    },
 
-        intervalID = setInterval(tick, 500);
-    }
-
-    function canMove(dx,dy,r) {
+    canMove: function(dx,dy,r) {
         var dx = dx || 0;
         var dy = dy===0 ? dy : dy || 1;
-        var mino = r || current_mino;
-        var next_x = current_x + dx; // 次に動こうとするx座標
-        var next_y = current_y + dy; // 次に動こうとするy座標
+        var mino = r || this.current_mino;
+        var next_x = this.current_x + dx; // 次に動こうとするx座標
+        var next_y = this.current_y + dy; // 次に動こうとするy座標
         for (var y = 0; y < 4; y++) {
             for (var x = 0; x < 4; x++) {
                 if (mino[y][x]) {
@@ -218,33 +225,33 @@ var main = function(){
                         return false;
                     }
 
-                    if(blocks[next_y + y][next_x + x]){
+                    if(this.blocks[next_y + y][next_x + x]){
                         return false;
                     }
                 }
             }
         }
         return true;
-    }
+    },
 
-    function rotate(isR){
+    rotate: function(isR){
         var x,y,i,j,rtn,d;
         rtn = [[0,0,0,0],[0,0,0,0],[0,0,0,0],[0,0,0,0]];
-        if(current_mino_id==1){ return current_mino; }
-        d = (current_mino_id==0)?3:2;
-        nr = (current_rotate+(isR?5:3))%4;
+        if(this.current_mino_id==1){ return this.current_mino; }
+        d = (this.current_mino_id==0)?3:2;
+        nr = (this.current_rotate+(isR?5:3))%4;
 
         // 回転
         for(i=0;i<d+1;i++){
             x = (isR?d-i:i);
             for(j=0;j<d+1;j++){
                 y = (isR?j:d-j);
-                rtn[y][x] = current_mino[i][j];
+                rtn[y][x] = this.current_mino[i][j];
             }
         }
 
         var l,tbl;
-        tbl = (current_mino_id==0)?gRotationRuleI:gRotationRuleGeneral;
+        tbl = (this.current_mino_id==0)?gRotationRuleI:gRotationRuleGeneral;
 
         tbl_dx = tbl.dx[(isR?0:1)][nr];
         tbl_dy = tbl.dy[(isR?0:1)][nr];
@@ -255,94 +262,106 @@ var main = function(){
         for(i=0;i<l;i++){
             dx = tbl_dx[i];
             dy = tbl_dy[i];
-            if(canMove(dx,dy,rtn)){
-                current_x += dx;
-                current_y += dy;
-                current_mino = rtn;
-                current_rotate = nr;
+            if(this.canMove(dx,dy,rtn)){
+                this.current_x += dx;
+                this.current_y += dy;
+                this.current_mino = rtn;
+                this.current_rotate = nr;
                 break;
             };
         }
-    }
+    },
 
-    function quickDrop(){
+    quickDrop: function(){
         var i;
-        for(i=0;canMove(0,i) && i<ROWS;i++){
+        for(i=0;this.canMove(0,i) && i<ROWS;i++){
         }
-        current_y+=i-1;
+        this.current_y+=i-1;
         console.debug('# quick');
-        nextTick();
-    }
+        this._nextTick();
+    },
 
-    function setHold(){
+    setHold: function(){
         // 最初のみ
-        if(hold<0){
-            hold = current_mino_id;
-            newMino();
+        if(this.hold<0){
+            this.hold = this.current_mino_id;
+            this.newMino();
         }
         else {
-            tmp = current_mino_id;
-            newMino(hold);
-            hold = tmp;
+            tmp = this.current_mino_id;
+            this.newMino(this.hold);
+            this.hold = tmp;
         }
-    }
+    },
 
-    document.body.onkeydown = function(e) {
-        // console.debug(e.keyCode);
+    input: function(e) {
         var x,y,r;
         x = 0;
         y = 0;
         switch(e.keyCode) {
-            case 16: setHold(); break; // space
-            case 37: canMove(-1,0) && current_x--; break; // left
-            case 39: canMove( 1,0) && current_x++; break; // right
-            case 40: canMove( 0,1) && current_y++; break; // bottom
-            case 88: rotate(true);  break; // x
-            case 90: rotate(false); break; // z
-            case 32: quickDrop(); break;
+            case 16: this.setHold(); break; // space
+            case 37: this.canMove(-1,0) && this.current_x--; break; // left
+            case 39: this.canMove( 1,0) && this.current_x++; break; // right
+            case 40: this.canMove( 0,1) && this.current_y++; break; // bottom
+            case 88: this.rotate(true);  break; // x
+            case 90: this.rotate(false); break; // z
+            case 32: this.quickDrop(); break;
         }
+    },
 
-        render();
-    }
-
-    function setGost(){
+    setGost: function(){
         var i;
-        for(i=0;canMove(0,i) && i<ROWS;i++){
+        for(i=0;this.canMove(0,i) && i<ROWS;i++){
         }
-        gost_y = current_y+i-1;
-    }
-    main.__destruct = function(){
-        clearTimeout(nextTickEventID);
-        clearInterval(intervalID);
+        this.gost_y = this.current_y+i-1;
+    },
+    destructor: function(){
+        clearTimeout(this.nextTickEventID);
     }
 
 };
 
-Game = function(){
+window.Game = function(){
     this._state = {};
-    this._stateNow = {};
-}
-Game.prototype = {
-    state: function(name, val){
-        if(!val){
-            this.__destruct();
-
-            this._state[name] && this._state[name]();
-            this._stateNow = this._state[name];
-        }
-        else {
-            this._state[name] = val;
-        }
-        return this;
-    },
-    __destruct: function(name){
-        if(typeof this._stateNow['__destruct'] == 'function'){
-            this._stateNow['__destruct']();
-        }
+    this._old = {};
+    this._now = {
+        constructor: function(){},
+        destructor: function(){},
+        tick: function(){},
+        render: function(){},
+        input: function(){},
     }
 }
+Game.prototype = {
+    state: function(val){
+        this._old = this._now;
+        this._now = val;
+
+        // 開始
+        this._old.destructor();
+        this._now.constructor();
+
+        // タイマー
+        Util.setInterval(this, this._tick, 500);
+
+        // キー
+        var self = this;
+        document.body.onkeydown = function(e){
+            self._input.call(self,e);
+        };
+
+        return this;
+    },
+    _input: function(e) {
+        this._now.input(e);
+        this._now.render();
+    },
+    _tick: function(){
+        this._now.tick();
+        this._now.render();
+    }
+}
+
 var game = new Game();
-game
-.state('title', title)
-.state('main', main)
-.state('main')
+game.state(main)
+
