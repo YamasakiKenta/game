@@ -20,10 +20,21 @@ var title = {
         ctx.fillText("Tetris", 10, 25);
     },
     input: function(){
-        // game.state('main'); 
+        game.state(main); 
     }
 };
 var main = {
+    _initBlocks: function(){
+        var i,j;
+        var blocks = [];
+        for(i=0;i<ROWS+1;i++){
+            blocks.push([]);
+            for(j=0;j<COLS;j++){
+                blocks[i].push(0);
+            }
+        }
+        return blocks;
+    },
     constructor: function(){
         this.hold = -1;
         this.gost_y = 0;
@@ -37,18 +48,7 @@ var main = {
         this.current_rotate = 0;
 
         // 初期化
-        this.blocks = initBlocks();
-        function initBlocks(){
-            var i,j;
-            var blocks = [];
-            for(i=0;i<ROWS+1;i++){
-                blocks.push([]);
-                for(j=0;j<COLS;j++){
-                    blocks[i].push(0);
-                }
-            }
-            return blocks;
-        }
+        this.blocks = this._initBlocks();
         this.newMino();
     },
 
@@ -153,9 +153,9 @@ var main = {
         this.newMino();
 
         if(!this.canMove()){
-            game.state('title');
+            game.state(title);
             this.canMove();
-            this.blocks = initBlocks();
+            this.blocks = this._initBlocks();
         }
     },
 
@@ -324,18 +324,23 @@ var main = {
 window.Game = function(){
     this._state = {};
     this._old = {};
-    this._now = {
+    this._def = {
         constructor: function(){},
         destructor: function(){},
         tick: function(){},
         render: function(){},
         input: function(){},
     }
+    this._now = this._def;
 }
 Game.prototype = {
     state: function(val){
         this._old = this._now;
         this._now = val;
+
+        for(k in this._def){
+            this._now[k] = this._now[k] || this._def[k];
+        }
 
         // 開始
         this._old.destructor();
