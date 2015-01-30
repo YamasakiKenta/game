@@ -1,4 +1,5 @@
-var ctx = document.getElementById('main').getContext('2d');
+// var ctx = document.getElementById('main').getContext('2d');
+var ctx = $('#main').get(0).getContext('2d');
 
 var Util = {
     setTimeout: function(self, func, time){
@@ -14,7 +15,7 @@ var Util = {
 
 var title = {
     render: function(){
-        ctx.clearRect(0,0,FIELD_W+300, FIELD_H);
+        ctx.clearRect(0,0,FIELD_W, FIELD_H);
         ctx.font = "18px 'ＭＳ Ｐゴシック'";
         ctx.fillStyle = 'black';
         ctx.fillText("Tetris", 10, 25);
@@ -56,7 +57,7 @@ var main = {
 
         this.setGost();
 
-        ctx.clearRect(0,0,FIELD_W+300, FIELD_H);
+        ctx.clearRect(0,0, BLOCK_W*COLS, FIELD_H);
 
         var x,y,i;
         for(i=0;i<ROWS;i++){
@@ -67,9 +68,6 @@ var main = {
                 ctx.fillRect(x,y,BLOCK_W-1, BLOCK_H-1);
 
                 if(this.blocks[i][j]){
-                    // ctx.StrokeStyle = 'black';
-                    // ctx.strokeRect(x,y,BLOCK_W-1, BLOCK_H-1);
-
                     ctx.fillStyle = COLORS[this.blocks[i][j]-1];
                     ctx.fillRect(x,y,BLOCK_W-1, BLOCK_H-1);
                 }
@@ -81,9 +79,6 @@ var main = {
                 if(this.current_mino[i][j]){
                     y = BLOCK_H * (this.current_y + i);
                     x = BLOCK_W * (this.current_x + j);
-
-                    // ctx.StrokeStyle = 'black';
-                    // ctx.strokeRect(x,y,BLOCK_W-1, BLOCK_H-1);
 
                     gy = BLOCK_H * (this.gost_y + i);
                     ctx.fillStyle = 'black';
@@ -100,9 +95,10 @@ var main = {
         for(i=0;i<4;i++){
             for(j=0;tmp[i]&&j<4;j++){
                 if(tmp[i][j]){
-                    y = BLOCK_H * i;
-                    x = BLOCK_W * j + 300 + BLOCK_W;
-                    // ctx.strokeRect(x,y,BLOCK_W-1, BLOCK_H-1);
+                    y = BLOCK_H * (i+1);
+                    x = BLOCK_W * (j+1) + BLOCK_W*COLS + BLOCK_W;
+
+                    console.debug(x);
 
                     ctx.fillStyle = COLORS[tmp[i][j]-1];
                     ctx.fillRect(x,y,BLOCK_W-1, BLOCK_H-1);
