@@ -77,20 +77,15 @@ var MINOS = [
     [0, 0, 0, 0],
   ]
 ];
-$('#main').css({
-    width: $('body').width(),
-    height: $('body').height()
-});
 var FIELD_W = $('#main').width();
 var FIELD_H = $('#main').height();
-
-var FIELD_W = 300;
-var FIELD_H = 600;
 
 var COLS = 10;
 var ROWS = 20;
 var BLOCK_W = Math.ceil(FIELD_W / COLS);
 var BLOCK_H = Math.ceil(FIELD_H / ROWS);
+BLOCK_W = BLOCK_H = 10;
+BLOCK_H = 5;
 // BLOCK_H = BLOCK_W = BLOCK_W<BLOCK_H?BLOCK_W:BLOCK_H;
 
 function RotRuleGen(){

@@ -53,6 +53,12 @@ var main = {
         this.newMino();
     },
 
+    _drawBlock: function(x,y,color){
+        if(color){
+            ctx.fillStyle = color;
+        }
+        ctx.fillRect(x,y,BLOCK_W-1, BLOCK_H-1);
+    },
     render: function(){
 
         this.setGost();
@@ -64,12 +70,10 @@ var main = {
             for(j=0;j<COLS;j++){
                 y = BLOCK_H * i;
                 x = BLOCK_W * j;
-                ctx.fillStyle = '#999';
-                ctx.fillRect(x,y,BLOCK_W-1, BLOCK_H-1);
+                this._drawBlock(x,y,'#999');
 
                 if(this.blocks[i][j]){
-                    ctx.fillStyle = COLORS[this.blocks[i][j]-1];
-                    ctx.fillRect(x,y,BLOCK_W-1, BLOCK_H-1);
+                    this._drawBlock(x,y,COLORS[this.blocks[i][j]-1]);
                 }
             }
         }
@@ -77,15 +81,12 @@ var main = {
         for(i=0;i<4;i++){
             for(j=0;j<4;j++){
                 if(this.current_mino[i][j]){
-                    y = BLOCK_H * (this.current_y + i);
-                    x = BLOCK_W * (this.current_x + j);
-
+                    x  = BLOCK_W * (this.current_x + j);
+                    y  = BLOCK_H * (this.current_y + i);
                     gy = BLOCK_H * (this.gost_y + i);
-                    ctx.fillStyle = 'black';
-                    ctx.fillRect(x,gy,BLOCK_W-1, BLOCK_H-1);
 
-                    ctx.fillStyle = COLORS[this.current_mino[i][j]-1];
-                    ctx.fillRect(x,y,BLOCK_W-1, BLOCK_H-1);
+                    this._drawBlock(x,gy,'black');
+                    this._drawBlock(x,y,COLORS[this.current_mino[i][j]-1]);
 
                 }
             }
@@ -98,10 +99,7 @@ var main = {
                     y = BLOCK_H * (i+1);
                     x = BLOCK_W * (j+1) + BLOCK_W*COLS + BLOCK_W;
 
-                    console.debug(x);
-
-                    ctx.fillStyle = COLORS[tmp[i][j]-1];
-                    ctx.fillRect(x,y,BLOCK_W-1, BLOCK_H-1);
+                    this._drawBlock(x,y,COLORS[tmp[i][j]-1]);
 
                 }
             }

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-	<meta charset="UTF-8">
+  <meta charset="UTF-8">
 	<title></title>
     <!-- jquery --> <script src="https://code.jquery.com/jquery-1.11.2.min.js"></script>
     <style>
@@ -10,7 +10,7 @@
     </style>
 </head>
 <body style="overflow: hidden;">
-    <canvas id="main" width=600 height=600></canvas>
+    <canvas id="main"></canvas>
     <div class="line" hidden>
         <div>SCORE: <span class="score">0</span></div>
         <ul class="count">
@@ -22,10 +22,16 @@
             <li>5: L テトリミノ : <span>0</span></li>
             <li>6: T テトリミノ : <span>0</span></li>
         </ul>
-    </div>
-
+    </div>  
+    <script>
+        $('#main').css({
+            height: '600px',
+            width: '600px'
+        });
+    </script>
     <script src="const.js"></script>
     <script src="debug.js"></script>
     <script src="main.js"></script>
 </body>
 </html>
+
