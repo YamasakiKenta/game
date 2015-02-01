@@ -77,6 +77,11 @@ var MINOS = [
     [0, 0, 0, 0],
   ]
 ];
+$('#main').prop({
+    width: 600,
+    height: 600,
+});
+
 var FIELD_W = $('#main').width();
 var FIELD_H = $('#main').height();
 
@@ -84,9 +89,7 @@ var COLS = 10;
 var ROWS = 20;
 var BLOCK_W = Math.ceil(FIELD_W / COLS);
 var BLOCK_H = Math.ceil(FIELD_H / ROWS);
-BLOCK_W = BLOCK_H = 10;
-BLOCK_H = 5;
-// BLOCK_H = BLOCK_W = BLOCK_W<BLOCK_H?BLOCK_W:BLOCK_H;
+BLOCK_H = BLOCK_W = BLOCK_W<BLOCK_H?BLOCK_W:BLOCK_H;
 
 function RotRuleGen(){
   // [回転方向(0=右, 1=左)][回転前のミノの向き(0=出現時, 1=右, 2=逆, 3=左)][ルール ID ]
