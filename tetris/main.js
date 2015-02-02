@@ -271,7 +271,6 @@ var main = {
         for(i=0;this.canMove(0,i) && i<ROWS;i++){
         }
         this.current_y+=i-1;
-        console.debug('# quick');
         this._nextTick();
     },
 
@@ -288,11 +287,11 @@ var main = {
         }
     },
 
-    input: function(e) {
+    input: function(code) {
         var x,y,r;
         x = 0;
         y = 0;
-        switch(e.keyCode) {
+        switch(code) {
             case 16: this.setHold(); break; // space
             case 37: this.canMove(-1,0) && this.current_x--; break; // left
             case 39: this.canMove( 1,0) && this.current_x++; break; // right
@@ -300,6 +299,21 @@ var main = {
             case 88: this.rotate(true);  break; // x
             case 90: this.rotate(false); break; // z
             case 32: this.quickDrop(); break;
+        }
+    },
+
+    input: function(code) {
+        var x,y,r;
+        x = 0;
+        y = 0;
+        switch(code) {
+            case 'hold'   : this.setHold(); break; // space
+            case 'left'   : this.canMove(-1,0) && this.current_x--; break; // left
+            case 'right'  : this.canMove( 1,0) && this.current_x++; break; // right
+            case 'down'   : this.canMove( 0,1) && this.current_y++; break; // bottom
+            case 'spin-l' : this.rotate(false); break; // z
+            case 'spin-r' : this.rotate(true);  break; // x
+            case 'drop'   : this.quickDrop(); break;
         }
     },
 
@@ -352,11 +366,25 @@ Game.prototype = {
         return this;
     },
     _input: function(e) {
-        this._now.input(e);
+        var code = '';
+        switch(e.keyCode) {
+            case 16: code='hold'   ; break ; 
+            case 37: code='left'   ; break ; 
+            case 39: code='right'  ; break ; 
+            case 40: code='down'   ; break ; 
+            case 90: code='spin-l' ; break ; 
+            case 88: code='spin-r' ; break ; 
+            case 32: code='drop'   ; break ; 
+        }
+        this._now.input(code);
         this._now.render();
     },
     _tick: function(){
         this._now.tick();
+        this._now.render();
+    },
+    key: function(code){
+        this._now.input(code);
         this._now.render();
     }
 }
