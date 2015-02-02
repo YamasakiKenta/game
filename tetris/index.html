@@ -12,19 +12,21 @@
         border: black 1px solid;
         padding: 2px;
         cursor: pointer;
+        height: 30px;
+        width: 30px;
     }
     </style>
     <script>
     $(function(){
         $('.keypad .up').click(function(){});
 
-        $('.keypad .down'   ).click(function(){game.key('down'   );});
-        $('.keypad .left'   ).click(function(){game.key('left'   );});
-        $('.keypad .right'  ).click(function(){game.key('right'  );});
-        $('.keypad .spin-r' ).click(function(){game.key('spin-r' );});
-        $('.keypad .spin-l' ).click(function(){game.key('spin-l' );});
-        $('.keypad .drop'   ).click(function(){game.key('drop'   );});
-        $('.keypad .hold'   ).click(function(){game.key('hold'   );});
+        $('.keypad .down'   ).on('touchstart  click', function(){game.key('down'   );});
+        $('.keypad .left'   ).on('touchstart  click', function(){game.key('left'   );});
+        $('.keypad .right'  ).on('touchstart  click', function(){game.key('right'  );});
+        $('.keypad .spin-r' ).on('touchstart  click', function(){game.key('spin-r' );});
+        $('.keypad .spin-l' ).on('touchstart  click', function(){game.key('spin-l' );});
+        $('.keypad .drop'   ).on('touchstart  click', function(){game.key('drop'   );});
+        $('.keypad .hold'   ).on('touchstart  click', function(){game.key('hold'   );});
 
     });
     </script>
@@ -47,13 +49,13 @@
     <script src="debug.js"></script>
     <script src="main.js"></script>
     <div class="keypad">
-        <div class="btn down"   >down    </div > 
-        <div class="btn left"   >left    </div > 
-        <div class="btn right"  >right   </div > 
-        <div class="btn spin-l" >spin-l  </div > 
-        <div class="btn spin-r" >spin-r  </div > 
-        <div class="btn drop"   >drop    </div > 
-        <div class="btn hold"   >hold    </div > 
+        <div class="btn down"   >down   </div > 
+        <div class="btn left"   >left   </div > 
+        <div class="btn right"  >right  </div > 
+        <div class="btn spin-l" >spinL  </div > 
+        <div class="btn spin-r" >spinR  </div > 
+        <div class="btn drop"   >drop   </div > 
+        <div class="btn hold"   >hold   </div > 
     <div>
 </body>
 </html>
