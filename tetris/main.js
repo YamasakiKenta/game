@@ -1,4 +1,3 @@
-// var ctx = document.getElementById('main').getContext('2d');
 var ctx = $('#main').get(0).getContext('2d');
 
 var Util = {
@@ -63,7 +62,7 @@ var main = {
 
         this.setGost();
 
-        ctx.clearRect(0,0, BLOCK_W*COLS, FIELD_H);
+        ctx.clearRect(0,0, FIELD_W, FIELD_H);
 
         var x,y,i;
         for(i=0;i<ROWS;i++){
@@ -392,3 +391,11 @@ Game.prototype = {
 var game = new Game();
 game.state(main)
 
+$(function(e){
+    $('#main').on('mousemove', function(e){
+        var pageCoords = "( " + e.pageX + ", " + e.pageY + " )";
+        var clientCoords = "( " + e.clientX + ", " + e.clientY + " )";
+        console.debug(pageCoords, clientCoords);
+    });
+
+});

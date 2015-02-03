@@ -7,7 +7,15 @@
     <style>
     *{padding:0px;margin:0px;}
     html,body{height:100%;width:100%;}
+    canvas {
+        border: 1px solid #333;
+        margin: 20px;
+    }
     .keypad .btn {
+                user-select: none;
+        -webkit-user-select: none; /* Safari、Chromeなど */
+        background: #000;
+        color: white;
         display: inline-block;
         border: black 1px solid;
         padding: 2px;
@@ -49,13 +57,13 @@
     <script src="debug.js"></script>
     <script src="main.js"></script>
     <div class="keypad">
-        <div class="btn down"   >down   </div > 
-        <div class="btn left"   >left   </div > 
-        <div class="btn right"  >right  </div > 
-        <div class="btn spin-l" >spinL  </div > 
-        <div class="btn spin-r" >spinR  </div > 
-        <div class="btn drop"   >drop   </div > 
-        <div class="btn hold"   >hold   </div > 
+        <div class="btn down"   >down</div > 
+        <div class="btn left"   >left</div > 
+        <div class="btn right"  >right</div > 
+        <div class="btn spin-l" >L</div > 
+        <div class="btn spin-r" >R</div > 
+        <div class="btn drop"   >drop</div > 
+        <div class="btn hold"   >hold</div > 
     <div>
 </body>
 </html>
