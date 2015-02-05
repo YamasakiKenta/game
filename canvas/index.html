@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title></title>
+        <!-- jquery --> <link rel="stylesheet" href="https://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
+        <!-- jquery --> <script src="https://code.jquery.com/jquery-1.11.2.min.js"></script>
+        <!-- jquery --> <script src="https://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>    
+    </head>
+    <style>
+* { margin: 0px; padding: 0px; }
+html, body { height: 100%; }
+canvas {
+    border: red 1px solid;
+}
+    </style>
+    <body>
+        <canvas id="main">
+        </canvas>
+    </body>
+    <script>
+$(function(){
+    var w,h;
+
+    w = $('html,body').width();
+    h = $('html,body').width();
+    var canvas = $('canvas')
+        .prop('width', w)
+        .prop('height', h).get(0);
+
+    // obj
+    // drow
+    function render(){
+        var ctx = canvas.getContext('2d');
+        ctx.beginPath();
+        for(i in lines){
+            ctx.lineTo(lines[i].x, lines[i].y);
+        }
+        ctx.stroke();
+    }
+
+    // events
+    var lines = [];
+    $('html,body').on('mouseup', function(e){
+        $(this).data('dragging', false);
+    });
+    $('html,body').on('mousedown', function(e){
+        var main = { x: e.pageX, y: e.pageY };
+        lines = [main];
+        $(this).data('dragging', true);
+    });
+    $('html,body').on('mousemove', function(e){
+        var dragging = $(this).data('dragging');
+        if(dragging){
+            var main = { x: e.pageX, y: e.pageY };
+            var l = lines.length-1;
+            if(main.x != lines[l].x || main.y != lines[l].y){
+                lines.push({
+                    x: main.x,
+                    y: main.y,
+                });
+                render();
+            }
+        }
+    });
+});
+    </script>
+</html>
