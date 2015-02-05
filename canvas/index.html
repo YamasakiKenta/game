@@ -1,5 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
+    <!-- <meta name="viewport" content="width=device-width, initial-scale=0.5,minimum-scale=0.5, maximum-scale=0.5, user-scalable=yes"> -->
+    <meta name="viewport" content="width=device-width">
     <head>
         <meta charset="UTF-8">
         <title></title>
@@ -8,11 +10,8 @@
         <!-- jquery --> <script src="https://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>    
     </head>
     <style>
-* { margin: 0px; padding: 0px; }
-html, body { height: 100%; }
-canvas {
-    border: red 1px solid;
-}
+        * { margin: 0px; padding: 0px; }
+        html, body { height: 100%; }
     </style>
     <body>
         <canvas id="main">
@@ -23,7 +22,7 @@ $(function(){
     var w,h;
 
     w = $('html,body').width();
-    h = $('html,body').width();
+    h = $('html,body').height();
     var canvas = $('canvas')
         .prop('width', w)
         .prop('height', h).get(0);
@@ -40,19 +39,30 @@ $(function(){
     }
 
     // events
-    var lines = [];
-    $('html,body').on('mouseup', function(e){
+    window.lines = [];
+    $('html,body').on('touchend mouseup', function(e){
+        e.preventDefault();
         $(this).data('dragging', false);
     });
-    $('html,body').on('mousedown', function(e){
-        var main = { x: e.pageX, y: e.pageY };
+    $('html,body').on('touchstart mousedown', function(e){
+        e.preventDefault();
+        var f = (!!e.type.match('touch'));
+        var main = {
+            x: (f?e.originalEvent.changedTouches[0]:e).pageX,
+            y: (f?e.originalEvent.changedTouches[0]:e).pageY
+        };
         lines = [main];
         $(this).data('dragging', true);
     });
-    $('html,body').on('mousemove', function(e){
+    $('html,body').on('touchmove mousemove', function(e){
+        e.preventDefault();
         var dragging = $(this).data('dragging');
         if(dragging){
-            var main = { x: e.pageX, y: e.pageY };
+            var f = (!!e.type.match('touch'));
+            var main = {
+                x: (f?e.originalEvent.changedTouches[0]:e).pageX,
+                y: (f?e.originalEvent.changedTouches[0]:e).pageY
+            };
             var l = lines.length-1;
             if(main.x != lines[l].x || main.y != lines[l].y){
                 lines.push({
