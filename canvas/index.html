@@ -11,26 +11,57 @@
     </head>
     <style>
         * { margin: 0px; padding: 0px; }
-        html, body { height: 100%; }
+        html, body { height: 100%; width: 100%; overflow: hidden;}
+        #menu {
+            position: fixed;
+            bottom: 0px;
+            width: 100%;
+            height: 40px;
+            transition: all 0.3s;
+            padding: 4px;
+        }
+        #menu:hover {
+            opacity: 1;
+            background: black;
+            color: white;
+            height: 80px;
+        }
+        #menu li {
+            visibility: hidden;
+            display: inline-block;
+            background: white;
+            color: black;
+            padding: 4px;
+            margin: 4px;
+            cursor: pointer;
+        }
+        #menu:hover * {
+            visibility: visible;
+        }
     </style>
     <body>
-        <canvas id="main">
-        </canvas>
+        <input type="file" name="file" id="file" hidden>
+        <canvas id="main"></canvas>
+        <div id="menu">
+            Menu
+            <ul>
+                <li class="delete">Delete</li>
+                <li class="save">Save</li>
+                <li class="load">Load</li>
+                <li class="color">color</li>
+            </ul>
+        </div>
     </body>
     <script>
 $(function(){
-    var w,h;
-
-    w = $('html,body').width();
-    h = $('html,body').height();
-    var canvas = $('canvas')
-        .prop('width', w)
-        .prop('height', h).get(0);
+    $('canvas')
+        .prop('width', $('html,body').width())
+        .prop('height', $('html,body').height());
 
     // obj
     // drow
+    var ctx = $('canvas').get(0).getContext('2d');
     function render(){
-        var ctx = canvas.getContext('2d');
         ctx.beginPath();
         for(i in lines){
             ctx.lineTo(lines[i].x, lines[i].y);
@@ -72,6 +103,33 @@ $(function(){
                 render();
             }
         }
+    });
+    $('.delete').on('click', function(){
+        ctx.clearRect(0,0,$('canvas').width(), $('canvas').height());
+    });
+    $('.save').click(function(){
+    });
+    $('.load').click(function(){
+        $('#file').click();
+    });
+
+    var image = new Image();
+    $('#file').change(function(ev) {
+        var files = ev.target.files;
+        $.each(files, function(index, item) {
+            var reader = new FileReader();
+            reader.onload = function(file) {
+                var ctx = $('canvas').get(0).getContext('2d');
+                var dataUrl = file.target.result;
+                image.src = dataUrl;
+                image.onload = function() {
+                    // canvas.width = image.width;
+                    // canvas.height = image.height;
+                    ctx.drawImage(image, 0, 0);
+                }
+            }
+            reader.readAsDataURL(item);
+        });
     });
 });
     </script>
